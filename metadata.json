@@ -1,0 +1,7 @@
+{
+  "name": "LinguaVerse 3D",
+  "description": "Immersive 3D language learning environment powered by Gemini Live.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}
