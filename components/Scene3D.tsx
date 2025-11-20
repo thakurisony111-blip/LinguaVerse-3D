@@ -1,6 +1,6 @@
-import React, { useRef, useMemo } from 'react';
-import { Canvas, useFrame } from '@react-three/fiber';
-import { OrbitControls, Text, Environment, ContactShadows, Float, Sparkles, SoftShadows, useTexture } from '@react-three/drei';
+import React, { useRef, useEffect } from 'react';
+import { Canvas, useFrame, useThree } from '@react-three/fiber';
+import { OrbitControls, Text, Environment, Sparkles, SoftShadows } from '@react-three/drei';
 import * as THREE from 'three';
 import { Scenario } from '../types';
 
@@ -8,6 +8,26 @@ interface SceneProps {
   scenario: Scenario;
   isAiSpeaking: boolean;
 }
+
+// --- Responsive Camera Helper ---
+const ResponsiveCamera = () => {
+  const { camera, size } = useThree();
+  
+  useEffect(() => {
+    const aspect = size.width / size.height;
+    // Adjust camera based on aspect ratio (Mobile vs Desktop)
+    if (aspect < 1) {
+       // Portrait (Mobile) - Pull back
+       camera.position.set(0, 3.5, 10);
+    } else {
+       // Landscape (Desktop) - Standard
+       camera.position.set(0, 2.5, 6);
+    }
+    camera.updateProjectionMatrix();
+  }, [size, camera]);
+
+  return null;
+};
 
 // --- Reusable Materials & Geometries ---
 
@@ -461,6 +481,7 @@ const RealisticMarket = ({ isAiSpeaking }: { isAiSpeaking: boolean }) => (
 export const Scene3D: React.FC<SceneProps> = ({ scenario, isAiSpeaking }) => {
   return (
     <Canvas shadows camera={{ position: [0, 2.5, 6], fov: 50 }}>
+      <ResponsiveCamera />
       <color attach="background" args={['#121212']} />
       
       <SoftShadows size={10} focus={0.5} samples={10} />
@@ -474,7 +495,7 @@ export const Scene3D: React.FC<SceneProps> = ({ scenario, isAiSpeaking }) => {
       <OrbitControls 
         enableZoom={true}
         minDistance={3}
-        maxDistance={10}
+        maxDistance={12}
         minPolarAngle={Math.PI / 4} 
         maxPolarAngle={Math.PI / 2}
         target={[0, 1, 0]}
